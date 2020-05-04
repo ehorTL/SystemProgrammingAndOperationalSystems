@@ -12,6 +12,14 @@ int main(){
 	string s3 = "string number 3 \       
 continues";
 
+/*   this is multiline comment
+*/
+
+/*this is multiline comment2*/
+
+	/*this is multiline comment3
+			*/
+
 	double a,b, c, d;
 	int f = 012;
 	int g = f;
@@ -98,3 +106,29 @@ continues";
 
 	return 0;
 }
+
+class CustomClass{
+	int myA;
+
+public : 
+	CustomClass(int a){
+		myA = a;
+	}
+
+	void showA(){
+		cout << myA;
+	}
+
+	int getA(){
+		return myA;
+	}
+}
+
+/* not comment but error because not closed
+
+
+
+
+
+
+

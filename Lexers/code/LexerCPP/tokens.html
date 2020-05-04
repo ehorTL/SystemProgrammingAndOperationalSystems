@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Lexer</title><style>html{white-space: pre-wrap;background-color: #e5e0e0;font-weight: 900;}</style></head><body><span style="color: #00C851" title="PREPROCESSOR_DIR">#include &lt;iostream&gt;       /</span>
+
+<span style="color: #00C851" title="PREPROCESSOR_DIR">#define MAX_NUM 1222 /   / </span>
+<span style="color: #00C851" title="PREPROCESSOR_DIR">#ifdef rjerhier</span>
+
+
+<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">main</span><span style="color: #b71c1c" title="PUNCTUATOR">(</span><span style="color: #b71c1c" title="PUNCTUATOR">)</span><span style="color: #b71c1c" title="PUNCTUATOR">{</span>
+
+	<span style="color: #000000" title="IDENTIFIER">string</span> <span style="color: #000000" title="IDENTIFIER">s1</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #304ffe" title="LITERAL_STRING">&quoti am string&quot</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #000000" title="IDENTIFIER">string</span> <span style="color: #000000" title="IDENTIFIER">s2</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #304ffe" title="LITERAL_STRING">&quotstring number2 ??/ 
+&quot</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #000000" title="IDENTIFIER">string</span> <span style="color: #000000" title="IDENTIFIER">s3</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #304ffe" title="LITERAL_STRING">&quotstring number 3 \       
+continues&quot</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+<span style="color: #4B515D" title="COMMENT">/*   this is multiline comment
+*/</span>
+
+<span style="color: #4B515D" title="COMMENT">/*this is multiline comment2*/</span>
+
+	<span style="color: #4B515D" title="COMMENT">/*this is multiline comment3
+			*/</span>
+
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">a</span><span style="color: #b71c1c" title="PUNCTUATOR">,</span><span style="color: #000000" title="IDENTIFIER">b</span><span style="color: #b71c1c" title="PUNCTUATOR">,</span> <span style="color: #000000" title="IDENTIFIER">c</span><span style="color: #b71c1c" title="PUNCTUATOR">,</span> <span style="color: #000000" title="IDENTIFIER">d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">f</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">012</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">g</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #000000" title="IDENTIFIER">f</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">h</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">10</span> <span style="color: #CC0000" title="OPERATOR">*</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">12</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+	<span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll1</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123ll</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll2</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123LL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+	<span style="color: #1a237e" title="KEYWORD">unsigned</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll3</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123ul</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">unsigned</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll4</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123uL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">unsigned</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll5</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123Ul</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">unsigned</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll6</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123UL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+	<span style="color: #1a237e" title="KEYWORD">unsigned</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll7</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123ull</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">unsigned</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll8</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123uLL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">unsigned</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll9</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123Ull</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">unsigned</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #1a237e" title="KEYWORD">long</span> <span style="color: #000000" title="IDENTIFIER">ll10</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">123ULL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">bin1</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0b00101</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">bin1</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0B00101</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">hex1</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0x190abcde</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">hex2</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0X190abcde</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">oct1</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">017</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+<span style="color: #4B515D" title="COMMENT">//float type literals</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d1</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">.1234</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d2</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d3</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e+12</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d4</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e-12</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d5</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e12</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d6</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E+12</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d7</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E-12</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d8</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E12</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+<span style="color: #4B515D" title="COMMENT">//float type double(D)</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d9</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">.1234D</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d10</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234D</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d11</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e+12D</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d12</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e-12D</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d13</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e12D</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d14</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E+12D</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d15</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E-12D</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d16</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E12D</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+<span style="color: #4B515D" title="COMMENT">//float type double(D) long (L)</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d17</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">.1234DL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d18</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234DL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d19</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e+12DL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d20</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e-12DL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d21</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e12DL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d22</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E+12DL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d23</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E-12DL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d24</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E12DL</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+<span style="color: #4B515D" title="COMMENT">//float type double(d)</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d25</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">.1234d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d26</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d27</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e+12d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d28</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e-12d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d29</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e12d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d30</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E+12d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d31</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E-12d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d32</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E12d</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+<span style="color: #4B515D" title="COMMENT">//float type double(d) long (l)</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d33</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">.1234dl</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d34</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234dl</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d35</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e+12dl</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d36</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e-12dl</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d37</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234e12dl</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d38</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E+12dl</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d39</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E-12dl</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">double</span> <span style="color: #000000" title="IDENTIFIER">d40</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0.1234E12dl</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+<span style="color: #4B515D" title="COMMENT">//char literals</span>
+	<span style="color: #1a237e" title="KEYWORD">char</span> <span style="color: #000000" title="IDENTIFIER">c1</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #e65100" title="LITERAL_CHAR">&#39c&#39</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">char</span> <span style="color: #000000" title="IDENTIFIER">c2</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #e65100" title="LITERAL_CHAR">&#39abcd&#39</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span> <span style="color: #4B515D" title="COMMENT">//it is taken only last symbol</span>
+	<span style="color: #1a237e" title="KEYWORD">char</span> <span style="color: #000000" title="IDENTIFIER">c3</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #e65100" title="LITERAL_CHAR">&#39\   
+	&#39</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">char</span> <span style="color: #000000" title="IDENTIFIER">c4</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #e65100" title="LITERAL_CHAR">&#39\\&#39</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #1a237e" title="KEYWORD">char</span> <span style="color: #000000" title="IDENTIFIER">c5</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #e65100" title="LITERAL_CHAR">&#39\
+	\
+	a&#39</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span> <span style="color: #4B515D" title="COMMENT">//it is correct</span>
+
+	<span style="color: #1a237e" title="KEYWORD">return</span> <span style="color: #f48fb1" title="LITERAL_NUMBER">0</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+<span style="color: #b71c1c" title="PUNCTUATOR">}</span>
+
+<span style="color: #1a237e" title="KEYWORD">class</span> <span style="color: #000000" title="IDENTIFIER">CustomClass</span><span style="color: #b71c1c" title="PUNCTUATOR">{</span>
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">myA</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+
+<span style="color: #1a237e" title="KEYWORD">public</span> <span style="color: #CC0000" title="OPERATOR">:</span> 
+	<span style="color: #000000" title="IDENTIFIER">CustomClass</span><span style="color: #b71c1c" title="PUNCTUATOR">(</span><span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">a</span><span style="color: #b71c1c" title="PUNCTUATOR">)</span><span style="color: #b71c1c" title="PUNCTUATOR">{</span>
+		<span style="color: #000000" title="IDENTIFIER">myA</span> <span style="color: #CC0000" title="OPERATOR">=</span> <span style="color: #000000" title="IDENTIFIER">a</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #b71c1c" title="PUNCTUATOR">}</span>
+
+	<span style="color: #1a237e" title="KEYWORD">void</span> <span style="color: #000000" title="IDENTIFIER">showA</span><span style="color: #b71c1c" title="PUNCTUATOR">(</span><span style="color: #b71c1c" title="PUNCTUATOR">)</span><span style="color: #b71c1c" title="PUNCTUATOR">{</span>
+		<span style="color: #000000" title="IDENTIFIER">cout</span> <span style="color: #CC0000" title="OPERATOR">&lt;&lt;</span> <span style="color: #000000" title="IDENTIFIER">myA</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #b71c1c" title="PUNCTUATOR">}</span>
+
+	<span style="color: #1a237e" title="KEYWORD">int</span> <span style="color: #000000" title="IDENTIFIER">getA</span><span style="color: #b71c1c" title="PUNCTUATOR">(</span><span style="color: #b71c1c" title="PUNCTUATOR">)</span><span style="color: #b71c1c" title="PUNCTUATOR">{</span>
+		<span style="color: #1a237e" title="KEYWORD">return</span> <span style="color: #000000" title="IDENTIFIER">myA</span><span style="color: #b71c1c" title="PUNCTUATOR">;</span>
+	<span style="color: #b71c1c" title="PUNCTUATOR">}</span>
+<span style="color: #b71c1c" title="PUNCTUATOR">}</span>
+
+<span style="color: #880e4f" title="ERROR">/* not comment but error because not closed
+
+
+
+
+
+
+
+
+</span></body></html>
