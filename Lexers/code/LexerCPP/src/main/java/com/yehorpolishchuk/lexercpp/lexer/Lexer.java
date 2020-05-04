@@ -157,7 +157,6 @@ public class Lexer {
                 case 32: maybeMultilineCommentCloses32(c); break;
                 case 33: questionMarkOp33(c); break;
                 case 34: maybeTrigraph34(c); break;
-                //new
                 case 35: floatStart35(c); break;
                 case 36: floatExp36(c); break;
                 case 37: floatExpSign37(c); break;
@@ -179,6 +178,12 @@ public class Lexer {
 //                case 53: no 53 state
                 case 54: hex54(c); break;
                 case 55: bin55(c); break;
+                //new
+                case 56: charLiteralStart56(c); break;
+                case 57: anyCharInCharLiteral57(c); break;
+                case 58: escapeSymbolInCharLiteral58(c); break;
+                case 59: whitespaceAfterEscapeSymbolInCharLiteral59(c); break;
+                case 60: linefeedSymbolInCharLiteral60(c); break;
 
                 case -1: {
                     state = 0;
@@ -293,6 +298,8 @@ public class Lexer {
             moveAndAddToBuffer(c, 48);
         } else if (c == '0'){
             moveAndAddToBuffer(c, 43);
+        } else if (c == '\''){
+            moveAndAddToBuffer(c, 56);
         }
         //else do nothing
     }
@@ -811,6 +818,71 @@ public class Lexer {
         }
     }
 
+    private void charLiteralStart56(char c){
+        if (c == '\\'){
+            moveAndAddToBuffer(c, 58);
+        } else if (c == '\n'){
+            addTokenAndClearBuffer(ERROR, "\'");
+            indexPointerRawCodeStream--;
+            state = -1;
+        } else {
+            moveAndAddToBuffer(c, 57);
+        }
+    }
+
+    private void anyCharInCharLiteral57(char c){
+        if (c == '\n'){
+            addTokenAndClearBuffer(ERROR, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = -1;
+        } else if (c == '\''){
+            addTokenAndClearBuffer(LITERAL_CHAR, buffer.toString()  + "\'");
+            state = 0;
+        } else if (c == '\\') {
+            moveAndAddToBuffer(c, 58);
+        } else {
+            moveAndAddToBuffer(c, 57);
+        }
+    }
+
+    private void escapeSymbolInCharLiteral58(char c){
+        if (Lexeme.isWhitespaceWithoutNewLine(c)){
+            moveAndAddToBuffer(c, 59);
+        } else if (c == '\n'){
+            moveAndAddToBuffer(c, 56);
+        } else {
+            moveAndAddToBuffer(c, 57);
+        }
+    }
+
+    private void whitespaceAfterEscapeSymbolInCharLiteral59(char c){
+        if (Lexeme.isWhitespaceWithoutNewLine(c)){
+            moveAndAddToBuffer(c, 59);
+        } else if (c == '\n'){
+            moveAndAddToBuffer(c, 60);
+        } else if (c == '\\'){
+            moveAndAddToBuffer(c, 58);
+        } else if (c == '\''){
+            addTokenAndClearBuffer(LITERAL_CHAR, buffer.toString() + "\'");
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 57);
+        }
+    }
+
+    private void linefeedSymbolInCharLiteral60(char c){
+        if (Lexeme.isWhitespaceWithoutNewLine(c)){
+            moveAndAddToBuffer(c, 59);
+        } else if (c == '\\'){
+            moveAndAddToBuffer(c, 58);
+        } else if (c == '\''){
+            addTokenAndClearBuffer(LITERAL_CHAR, buffer.toString() + "\'");
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 57); //or to 60
+        }
+    }
+
     /**
      * work with string literals
     * */
@@ -1012,7 +1084,7 @@ public class Lexer {
         PREPROC_DIR("#00C851"), //green
         ERROR("#880e4f"), //pink darken
         LITERAL_STRING("#304ffe"), //indigo accent-4
-        LITERAL_CHAR("#fdd835"), //yellow darken-1
+        LITERAL_CHAR("#e65100"), //orange darken-4
         LITERAL_NUMBER("#f48fb1"), // pink lighten-3
         TRIGRAPH("#4e342e"); //brown darken 3
 

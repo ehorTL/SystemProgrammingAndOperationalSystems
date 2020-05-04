@@ -86,6 +86,15 @@ continues";
 	double d39 = 0.1234E-12dl;
 	double d40 = 0.1234E12dl;
 
+//char literals
+	char c1 = 'c';
+	char c2 = 'abcd'; //it is taken only last symbol
+	char c3 = '\   
+	';
+	char c4 = '\\';
+	char c5 = '\
+	\
+	a'; //it is correct
 
 	return 0;
 }
