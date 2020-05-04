@@ -9,6 +9,10 @@ public class Token {
         this.value = new TokenValue(value);
     }
 
+    public void setName(TokenNameAllowed tokenName) {
+        this.name = new TokenName(tokenName);
+    }
+
     public TokenName getName() {
         return name;
     }

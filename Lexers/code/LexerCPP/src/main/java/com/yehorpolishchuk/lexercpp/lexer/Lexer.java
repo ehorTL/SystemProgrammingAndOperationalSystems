@@ -2,9 +2,7 @@ package com.yehorpolishchuk.lexercpp.lexer;
 
 import com.yehorpolishchuk.lexercpp.lexeme.Lexeme;
 import com.yehorpolishchuk.lexercpp.token.Token;
-import com.yehorpolishchuk.lexercpp.token.TokenName;
 import com.yehorpolishchuk.lexercpp.token.TokenNameAllowed;
-import com.yehorpolishchuk.lexercpp.token.TokenValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -119,6 +117,7 @@ public class Lexer {
         while (this.indexPointerRawCodeStream < this.rawCodeStream.length()){
             char c = rawCodeStream.charAt(this.indexPointerRawCodeStream);
 
+            //logging
             System.out.print("MUMBER : " + indexPointerRawCodeStream + " code " + (byte)c + " char " +
                     ((c == '\n') ? "\\n" : c) + " STATE FROM: " + state);
 
@@ -134,6 +133,25 @@ public class Lexer {
                 case 8: maybeStringLiteral8(c); break;
                 case 9: maybeStringLiteral9(c); break;
                 case 10: maybeIdentifier10(c); break;
+                //new
+                case 11: lessThanOp(c); break;
+                case 12: bitLeftShiftOp(c); break;
+                case 13: greaterThatOp(c); break;
+                case 14: bitRightShiftOp(c); break;
+                case 15: plusOp15(c); break;
+                case 16: minusOp16(c); break;
+                case 17: pointerOp17(c); break;
+                case 18: notXorOp18(c); break;
+                case 19: bitAndOp19(c); break;
+                case 20: bitOrOp20(c); break;
+                case 21: modOp21(c); break;
+                case 22: ppNumberSignAlt22(c); break;
+                case 23: ppNumberSignDoubleAlt23(c); break;
+                case 24: assignOrEqOp(c); break;
+                case 25: maybeIdentifier10(c); break;
+                case 26: maybeIdentifier10(c); break;
+                case 27: maybeIdentifier10(c); break;
+//                case 28: maybeIdentifier10(c); break;
                 case -1: {
                     state = 0;
                     indexPointerRawCodeStream--;
@@ -149,17 +167,14 @@ public class Lexer {
             this.indexPointerRawCodeStream++;
         }
 
-//        this.tokens = new ArrayList<>();
-//        tokens.add(new Token(PREPROCESSOR_DIR, "#include <iostream>"));
-//        tokens.add(new Token(KEYWORD, "int"));
-//        tokens.add(new Token(IDENTIFIER, "main"));
-//        tokens.add(new Token(PUNCTUATOR, "("));
-//        tokens.add(new Token(PUNCTUATOR, ")"));
-//        tokens.add(new Token(PUNCTUATOR, "{"));
-//        tokens.add(new Token(KEYWORD, "return"));
-//        tokens.add(new Token(LITERAL_NUMBER, "0"));
-//        tokens.add(new Token(PUNCTUATOR, ";"));
-//        tokens.add(new Token(PUNCTUATOR, "}"));
+        //replace some identifiers with keywords
+        for (Token t : tokens){
+            if (t.getName().getTokenName() == IDENTIFIER){
+                if (Lexeme.isKeyword(t.getValue().getValue())){
+                    t.setName(KEYWORD);
+                }
+            }
+        }
     }
 
     /**
@@ -180,9 +195,19 @@ public class Lexer {
         tokens.add(new Token(tokenName, value));
     }
 
+    private void addToken(TokenNameAllowed tokenName, char value){
+        tokens.add(new Token(tokenName, Character.toString(value)));
+    }
+
     private void addTokenAndClearBuffer(TokenNameAllowed tokenName, String value){
         tokens.add(new Token(tokenName, value));
         buffer = new StringBuilder("");
+    }
+
+    // , ; { [ ( ) ] } ~
+    private boolean isAlwaysOneCharToken(char c){
+        return c == ',' || c == ';' || c == '{' || c == '[' || c == '('
+                || c == ')' || c == ']' || c == '}' || c == '~';
     }
 
     private void startState(char c){
@@ -194,8 +219,201 @@ public class Lexer {
             moveAndAddToBuffer('\"', 6);
         } else if (Lexeme.isLetterOrUnderscore(c)){
             moveAndAddToBuffer(c,10);
+        } else if (isAlwaysOneCharToken(c)){
+            if (c == '~'){
+                addToken(OPERATOR, Character.toString(c));
+            } else {
+                addToken(PUNCTUATOR, Character.toString(c));
+            }
+        } else if (c == '|'){
+            moveAndAddToBuffer(c, 20);
+        } else if (c == '&'){
+            moveAndAddToBuffer(c, 19);
+        } else if (c == '!' || c == '^'){
+            moveAndAddToBuffer(c, 18);
+        } else if (c == '-'){
+            moveAndAddToBuffer(c, 16);
+        } else if (c == '+'){
+            moveAndAddToBuffer(c, 15);
+        } else if (c == '>'){
+            moveAndAddToBuffer(c, 13);
+        } else if (c == '<'){
+            moveAndAddToBuffer(c, 11);
+        } else if (c == '%'){
+            moveAndAddToBuffer(c, 21);
+        } else if (c == '='){
+            moveAndAddToBuffer(c, 24);
+        } else if (c == '\\'){
+            addToken(ERROR, c);
+        } else if (c == ':'){
+            moveAndAddToBuffer(c, 27);
+        } else if (c == '.'){
+            moveAndAddToBuffer(c, 25);
+        } else if (c == '/'){
+            moveAndAddToBuffer(c, 29);
+        } else if (c == '?'){
+            moveAndAddToBuffer(c, 33);
         }
         //else do nothing
+    }
+
+    private void lessThanOp(char c){
+        if (c == '<'){
+            moveAndAddToBuffer(c, 12);
+        } else if (c == '='){
+            addTokenAndClearBuffer(OPERATOR, "<=");
+            state = 0;
+        } else if (c == ':' || c == '%'){
+            addTokenAndClearBuffer(PUNCTUATOR, buffer.toString() + c);
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "<");
+            indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    private void bitLeftShiftOp(char c){
+        if (c == '='){
+            addTokenAndClearBuffer(OPERATOR,"<<=");
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(OPERATOR,"<<");
+            state = 0;
+            indexPointerRawCodeStream--;
+        }
+    }
+
+    private void greaterThatOp(char c){
+        if (c == '>'){
+            moveAndAddToBuffer(c, 14);
+        } else if (c == '='){
+            addTokenAndClearBuffer(OPERATOR, ">=");
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(OPERATOR, ">");
+            indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    private void bitRightShiftOp(char c){
+        if (c == '='){
+            addTokenAndClearBuffer(OPERATOR, ">>=");
+        } else {
+            addTokenAndClearBuffer(OPERATOR, ">>");
+            indexPointerRawCodeStream--;
+        }
+        state = 0;
+    }
+
+    private void plusOp15(char c){
+        if (c == '+' || c == '='){
+            addTokenAndClearBuffer(OPERATOR,buffer.toString() + c);
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "+");
+            indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    private void minusOp16(char c){
+        if (c == '>'){
+            moveAndAddToBuffer(c, 17);
+        } else if (c == '-' || c == '='){
+            addTokenAndClearBuffer(OPERATOR, buffer.toString() + c);
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "-");
+            state = 0;
+            indexPointerRawCodeStream--;
+        }
+    }
+
+    private void pointerOp17(char c){
+        if (c == '*'){
+            addTokenAndClearBuffer(OPERATOR, "->*");
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "->");
+            indexPointerRawCodeStream--;
+        }
+        state = 0;
+    }
+
+    private void notXorOp18(char c){
+        if (c == '='){
+            addTokenAndClearBuffer(OPERATOR, buffer.toString() + c);
+        } else {
+            addTokenAndClearBuffer(OPERATOR, buffer.toString());
+            indexPointerRawCodeStream--;
+        }
+        state = 0;
+    }
+
+    private void bitAndOp19(char c){
+        if (c == '&' || c == '='){
+            addTokenAndClearBuffer(OPERATOR, buffer.toString() + c);
+        } else {
+            addTokenAndClearBuffer(OPERATOR,"&");
+            indexPointerRawCodeStream--;
+        }
+        state = 0;
+    }
+
+    private void bitOrOp20(char c){
+        if (c == '|' || c == '='){
+            addTokenAndClearBuffer(OPERATOR, buffer.toString() + c);
+        } else {
+            addTokenAndClearBuffer(OPERATOR,"|");
+            indexPointerRawCodeStream--;
+        }
+        state = 0;
+    }
+
+    private void modOp21(char c){
+        if (c == ':'){
+            moveAndAddToBuffer(c, 22);
+        } else if (c == '=' || c == '>'){
+            addTokenAndClearBuffer(OPERATOR, buffer.toString() + c);
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "%");
+            indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    //cannot be reached from 0 state, must be rewritten with reaching from 2 state
+    private void ppNumberSignAlt22(char c){
+        if (c == '%'){
+            moveAndAddToBuffer(c, 23);
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "%:");
+            indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    //generates error if %:% sequence in buffer as there cannot exist %: operator and then % operator
+    private void ppNumberSignDoubleAlt23(char c){
+        if (c == ':'){
+            addTokenAndClearBuffer(OPERATOR, "%:%:");
+        } else {
+            addTokenAndClearBuffer(ERROR, "%:%");
+            indexPointerRawCodeStream--;
+        }
+        state = 0;
+    }
+
+    private void assignOrEqOp(char c){
+        if (c == '='){
+            addTokenAndClearBuffer(OPERATOR, "==");
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "=");
+            indexPointerRawCodeStream--;
+        }
+        state = 0;
     }
 
     /**
