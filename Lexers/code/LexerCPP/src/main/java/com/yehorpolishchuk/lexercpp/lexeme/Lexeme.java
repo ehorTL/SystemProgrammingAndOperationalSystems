@@ -6,9 +6,10 @@ import java.util.HashSet;
 
 public class Lexeme {
 
+    //length available 2,4,5,6
     private static HashSet<String> ppDirectives = new HashSet<String>(
             new ArrayList<>(Arrays.asList(new String [] {"if", "ifdef", "ifndef", "elif", "else", "endif",
-                    "include", "define", "unedf", "line",
+                    "include", "define", "undef", "line",
                     "error", "pragma"}))
     );
 

@@ -4,6 +4,7 @@ import com.yehorpolishchuk.lexercpp.lexeme.Lexeme;
 import com.yehorpolishchuk.lexercpp.token.Token;
 import com.yehorpolishchuk.lexercpp.token.TokenName;
 import com.yehorpolishchuk.lexercpp.token.TokenNameAllowed;
+import com.yehorpolishchuk.lexercpp.token.TokenValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,11 +17,12 @@ import static com.yehorpolishchuk.lexercpp.token.TokenNameAllowed.*;
 
 public class Lexer {
     private int state;
-    private int indexPointer;
+    private int indexPointerRawCodeStream;
     private String rawCode;
     private StringBuilder rawCodeStream;
     private ArrayList<Token> tokens;
     private String rawCodeFilename;
+    private StringBuilder buffer;
 
     /**
      * Reads a file with filename and save it content to this.rawCode string.
@@ -40,8 +42,9 @@ public class Lexer {
         this.rawCode = sb.toString();
 
         this.state = 0;
-        this.indexPointer = 0;
+        this.indexPointerRawCodeStream = 0;
         this.tokens = new ArrayList<>();
+        this.buffer = new StringBuilder();
     }
 
     public String generateHTMLFromTokens() {
@@ -107,17 +110,229 @@ public class Lexer {
      * */
     public void parse(){
         //add \n to the beginning of the raw code
+        this.rawCodeStream = new StringBuilder("\n" + this.rawCode);
+        this.indexPointerRawCodeStream = 0;
+
         this.tokens = new ArrayList<>();
-        tokens.add(new Token(PREPROCESSOR_DIR, "#include <iostream>"));
-        tokens.add(new Token(KEYWORD, "int"));
-        tokens.add(new Token(IDENTIFIER, "main"));
-        tokens.add(new Token(PUNCTUATOR, "("));
-        tokens.add(new Token(PUNCTUATOR, ")"));
-        tokens.add(new Token(PUNCTUATOR, "{"));
-        tokens.add(new Token(KEYWORD, "return"));
-        tokens.add(new Token(LITERAL_NUMBER, "0"));
-        tokens.add(new Token(PUNCTUATOR, ";"));
-        tokens.add(new Token(PUNCTUATOR, "}"));
+
+        //state handling loop
+        while (this.indexPointerRawCodeStream < this.rawCodeStream.length()){
+            char c = rawCodeStream.charAt(this.indexPointerRawCodeStream);
+
+            System.out.print("MUMBER : " + indexPointerRawCodeStream + " code " + (byte)c + " char " +
+                    ((c == '\n') ? "\\n" : c) + " STATE FROM: " + state);
+
+            switch (this.state){
+                case 0 : startState(c); break;
+//                case 1 :  no 1 state
+                case 2: maybePPDirective2(c); break;
+                case 3: maybePPDirective3(c); break;
+                case 4: maybePPDirective4(c); break;
+                case 5: maybePPDirective5Ends(c); break;
+                case 6: maybeStringLiteral6(c); break;
+                case 7: maybeStringLiteral7(c); break;
+                case 8: maybeStringLiteral8(c); break;
+                case 9: maybeStringLiteral9(c); break;
+                case 10: maybeIdentifier10(c); break;
+                case -1: {
+                    state = 0;
+                    indexPointerRawCodeStream--;
+                    break;
+                }
+                default:{
+                    break; //change code, dummy
+                }
+            }
+
+            System.out.println(" ---> " + state);
+
+            this.indexPointerRawCodeStream++;
+        }
+
+//        this.tokens = new ArrayList<>();
+//        tokens.add(new Token(PREPROCESSOR_DIR, "#include <iostream>"));
+//        tokens.add(new Token(KEYWORD, "int"));
+//        tokens.add(new Token(IDENTIFIER, "main"));
+//        tokens.add(new Token(PUNCTUATOR, "("));
+//        tokens.add(new Token(PUNCTUATOR, ")"));
+//        tokens.add(new Token(PUNCTUATOR, "{"));
+//        tokens.add(new Token(KEYWORD, "return"));
+//        tokens.add(new Token(LITERAL_NUMBER, "0"));
+//        tokens.add(new Token(PUNCTUATOR, ";"));
+//        tokens.add(new Token(PUNCTUATOR, "}"));
+    }
+
+    /**
+     * Add transitionSymbol to the buffer and set new state;
+     * Transition function analogue
+     */
+    private void moveAndAddToBuffer(char transitionSymbol, int newState){
+        this.state = newState;
+        this.buffer.append(transitionSymbol);
+    }
+
+    private void moveAndAddToBuffer(String transitionSymbol, int newState){
+        this.state = newState;
+        this.buffer.append(transitionSymbol);
+    }
+
+    private void addToken(TokenNameAllowed tokenName, String value){
+        tokens.add(new Token(tokenName, value));
+    }
+
+    private void addTokenAndClearBuffer(TokenNameAllowed tokenName, String value){
+        tokens.add(new Token(tokenName, value));
+        buffer = new StringBuilder("");
+    }
+
+    private void startState(char c){
+        if (c == '#'){
+            addToken(ERROR, "#"); // the same state
+        } else if (c == '\n'){
+            state = 2;
+        } else if (c == '\"'){
+            moveAndAddToBuffer('\"', 6);
+        } else if (Lexeme.isLetterOrUnderscore(c)){
+            moveAndAddToBuffer(c,10);
+        }
+        //else do nothing
+    }
+
+    /**
+     * owrk with string literals
+    * */
+    private void maybeStringLiteral6(char c){
+        if (c == '\"'){
+            addTokenAndClearBuffer(LITERAL_STRING, buffer.toString() + "\"");
+            state = 0;
+        } else if (c == '\n'){
+            addTokenAndClearBuffer(ERROR, "\"");
+            indexPointerRawCodeStream--;
+            state = -1;
+        } else if (c == '\\'){
+            moveAndAddToBuffer(c, 7);
+        } else if (c == '?'){
+            moveAndAddToBuffer(c,8);
+        } else {
+            moveAndAddToBuffer(c, 6);  //the same state
+        }
+    }
+
+    private void maybeStringLiteral7(char c){
+        if(Lexeme.isWhitespaceWithoutNewLine(c)){
+            moveAndAddToBuffer(c, 7);
+        } else { // (c == '\n') and other
+            moveAndAddToBuffer(c, 6);
+        }
+    }
+
+    private void maybeStringLiteral8(char c){
+        if (c == '?'){
+          moveAndAddToBuffer(c,9);
+        } else if (c == '\n'){
+            addTokenAndClearBuffer(ERROR, buffer.toString());
+            state = -1;
+            indexPointerRawCodeStream--;
+        } else {
+            moveAndAddToBuffer(c, 6);
+        }
+    }
+
+    private void maybeStringLiteral9(char c){
+        if (c == '\n'){
+            addTokenAndClearBuffer(ERROR, buffer.toString());
+            state = -1;
+            indexPointerRawCodeStream--;
+        } else if (c == '/'){
+            moveAndAddToBuffer(c, 7);
+        } else {
+            moveAndAddToBuffer(c, 6);
+        }
+    }
+
+    private void maybeIdentifier10(char c){
+        if (Lexeme.isIdentifierChar(c)){
+            moveAndAddToBuffer(c,10); //retain the same
+        } else {
+            addTokenAndClearBuffer(IDENTIFIER, buffer.toString());
+            state = 0;
+            indexPointerRawCodeStream--;
+        }
+    }
+
+    private void maybePPDirective2(char c){
+        if (Lexeme.isWhitespace(c)){
+            state = 2; //retain the same state
+        } else if (c == '#'){
+            moveAndAddToBuffer('#', 3);
+        } else {
+            state = 0;
+            indexPointerRawCodeStream--;
+        }
+    }
+
+    private void maybePPDirective3(char c){
+        if (Lexeme.isWhitespaceWithoutNewLine(c)){
+            moveAndAddToBuffer(c,3); //retain the same
+        } else {
+            StringBuilder keywordSearchingFor = new StringBuilder("");
+            if (isPreprocessorKeywordNext(this.indexPointerRawCodeStream, keywordSearchingFor)){
+                moveAndAddToBuffer(keywordSearchingFor.toString(), 4);
+                this.indexPointerRawCodeStream += keywordSearchingFor.length() - 1;
+            } else { //c == '\n' or another
+                addTokenAndClearBuffer(ERROR, "#");
+                indexPointerRawCodeStream--;
+                state = 0;
+            }
+        }
+    }
+
+    private void maybePPDirective4(char c){
+        if (c == '/'){
+            moveAndAddToBuffer('/', 5);
+        } else if (Lexeme.isAllowedChar(c) && (c != '\n')){
+            moveAndAddToBuffer(c, 4); //retain the same
+        } else { //if newline symbol
+            addTokenAndClearBuffer(PREPROCESSOR_DIR, this.buffer.toString());
+            this.indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    private void maybePPDirective5Ends(char c){
+        if (c == '/'){
+            //delete last symbol to be '/' from buffer
+            //next token is going to be a single line comment
+            addTokenAndClearBuffer(PREPROCESSOR_DIR, buffer.deleteCharAt(buffer.length() - 1).toString());
+            indexPointerRawCodeStream -= 2;
+            state = 0;
+        } else if (c == '\n'){
+            addTokenAndClearBuffer(PREPROCESSOR_DIR, this.buffer.toString());
+            this.indexPointerRawCodeStream--;
+            state = 0;
+        } else if (Lexeme.isAllowedChar(c) && (c != '\n')){
+            moveAndAddToBuffer(c, 4); //retain the same
+        } else {
+            addTokenAndClearBuffer(ERROR, buffer.toString()); //unallowed symbol
+            state = -1; //error state
+        }
+    }
+
+    private boolean isPreprocessorKeywordNext(int fromIndexInRawCodeStream, StringBuilder returnWhatKeyword){
+        //length available 2,4,5,6
+        int[] sizesAvailable = new int[]{2,4,5,6,7};
+        String pattern = "";
+        for (int i = 0; i < sizesAvailable.length; i++){
+            if (fromIndexInRawCodeStream + sizesAvailable[i] <= this.rawCodeStream.length()){
+                pattern = this.rawCodeStream.substring(fromIndexInRawCodeStream, fromIndexInRawCodeStream + sizesAvailable[i]);
+                if (Lexeme.isPreprocessorKeyword(pattern)){
+                    returnWhatKeyword.append(pattern);
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private String generateHTMLTagForToken(Token t) {
