@@ -18,6 +18,7 @@ public class Main {
         StringBuilder s = new StringBuilder("cheburek");
         changestring(s);
         System.out.println(s.toString());
+
     }
 
     public static boolean changestring(StringBuilder s){

@@ -107,8 +107,8 @@ public class Lexer {
      * for now it's test data here hardcoded
      * */
     public void parse(){
-        //add \n to the beginning of the raw code
-        this.rawCodeStream = new StringBuilder("\n" + this.rawCode);
+        //add \n to the beginning of the raw code and to the end of code
+        this.rawCodeStream = new StringBuilder("\n" + this.rawCode + "\n");
         this.indexPointerRawCodeStream = 0;
 
         this.tokens = new ArrayList<>();
@@ -133,7 +133,6 @@ public class Lexer {
                 case 8: maybeStringLiteral8(c); break;
                 case 9: maybeStringLiteral9(c); break;
                 case 10: maybeIdentifier10(c); break;
-                //new
                 case 11: lessThanOp(c); break;
                 case 12: bitLeftShiftOp(c); break;
                 case 13: greaterThatOp(c); break;
@@ -141,17 +140,46 @@ public class Lexer {
                 case 15: plusOp15(c); break;
                 case 16: minusOp16(c); break;
                 case 17: pointerOp17(c); break;
-                case 18: notXorOp18(c); break;
+                case 18: notXorMultOp18(c); break;
                 case 19: bitAndOp19(c); break;
                 case 20: bitOrOp20(c); break;
                 case 21: modOp21(c); break;
                 case 22: ppNumberSignAlt22(c); break;
                 case 23: ppNumberSignDoubleAlt23(c); break;
                 case 24: assignOrEqOp(c); break;
-                case 25: maybeIdentifier10(c); break;
-                case 26: maybeIdentifier10(c); break;
-                case 27: maybeIdentifier10(c); break;
-//                case 28: maybeIdentifier10(c); break;
+                case 25: dotOp25(c); break;
+                case 26: maybeThreeDots26(c); break;
+                case 27: colon27(c); break;
+//                case 28: no 28 state
+                case 29: maybeComment29(c); break;
+                case 30: inSingleLineComment30(c); break;
+                case 31: multilineComment31(c); break;
+                case 32: maybeMultilineCommentCloses32(c); break;
+                case 33: questionMarkOp33(c); break;
+                case 34: maybeTrigraph34(c); break;
+                //new
+                case 35: floatStart35(c); break;
+                case 36: floatExp36(c); break;
+                case 37: floatExpSign37(c); break;
+                case 38: floatExpWithoutSign38(c); break;
+                case 39: floatExpBigD39(c); break;
+                case 40: floatExpBigDBigL40(c); break;
+                case 41: floatExpSmallD41(c); break;
+//                case 42: no 42 state
+                case 43: binOctHexStart43(c); break;
+                case 44: hexStartX44(c); break;
+                case 45: binStartB45(c); break;
+                case 46: octStartNum0746(c); break;
+                case 47: numberErrorAccumulatingState47(c); break;
+                case 48: decimalStartNum48(c); break;
+                case 49: unsignedUu49(c); break;
+                case 50: unsignedSmallL50(c); break;
+                case 51: unsignedBigL51(c); break;
+                case 52: unsignedll52(c); break;
+//                case 53: no 53 state
+                case 54: hex54(c); break;
+                case 55: bin55(c); break;
+
                 case -1: {
                     state = 0;
                     indexPointerRawCodeStream--;
@@ -167,6 +195,11 @@ public class Lexer {
             this.indexPointerRawCodeStream++;
         }
 
+        //flush not empty buffer as an ERROR
+        if (this.buffer.length() != 0){
+            addTokenAndClearBuffer(ERROR, buffer.toString());
+        }
+
         //replace some identifiers with keywords
         for (Token t : tokens){
             if (t.getName().getTokenName() == IDENTIFIER){
@@ -175,6 +208,9 @@ public class Lexer {
                 }
             }
         }
+
+        //common table enhancement can be written here in loop
+        //the simple way to clarify token is by using regex here in loop
     }
 
     /**
@@ -229,7 +265,7 @@ public class Lexer {
             moveAndAddToBuffer(c, 20);
         } else if (c == '&'){
             moveAndAddToBuffer(c, 19);
-        } else if (c == '!' || c == '^'){
+        } else if (c == '!' || c == '^' || c == '*'){
             moveAndAddToBuffer(c, 18);
         } else if (c == '-'){
             moveAndAddToBuffer(c, 16);
@@ -253,6 +289,10 @@ public class Lexer {
             moveAndAddToBuffer(c, 29);
         } else if (c == '?'){
             moveAndAddToBuffer(c, 33);
+        } else if (Lexeme.isDigit(c) && c != '0'){
+            moveAndAddToBuffer(c, 48);
+        } else if (c == '0'){
+            moveAndAddToBuffer(c, 43);
         }
         //else do nothing
     }
@@ -341,7 +381,7 @@ public class Lexer {
         state = 0;
     }
 
-    private void notXorOp18(char c){
+    private void notXorMultOp18(char c){
         if (c == '='){
             addTokenAndClearBuffer(OPERATOR, buffer.toString() + c);
         } else {
@@ -416,8 +456,363 @@ public class Lexer {
         state = 0;
     }
 
+    private void dotOp25(char c){
+        if (c == '.'){
+            moveAndAddToBuffer(c, 26);
+        } else if (c == '*'){
+            addTokenAndClearBuffer(OPERATOR, ".*");
+            state = 0;
+        } else if (Lexeme.isDigit(c)){
+            moveAndAddToBuffer(c, 35);
+        } else {
+            addTokenAndClearBuffer(OPERATOR, ".");
+            indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    private void maybeThreeDots26(char c){
+        if (c == '.'){
+            addTokenAndClearBuffer(OPERATOR, "...");
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(ERROR, "..");
+            state = -1;
+            indexPointerRawCodeStream--;
+        }
+    }
+
+    private void colon27(char c){
+        if (c == ':'){
+            addTokenAndClearBuffer(OPERATOR,"::");
+        } else if (c == '>'){
+            addTokenAndClearBuffer(PUNCTUATOR, ":>");
+        } else {
+            addTokenAndClearBuffer(OPERATOR, ":");
+            indexPointerRawCodeStream--;
+        }
+        state = 0;
+    }
+
+    private void maybeComment29(char c){
+        if (c == '/') {
+            moveAndAddToBuffer(c, 30);
+        } else if (c == '*'){
+            moveAndAddToBuffer(c, 31);
+        } else if (c == '='){
+            addTokenAndClearBuffer(OPERATOR, "/=");
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "/");
+            indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    private void inSingleLineComment30(char c){
+        if (c =='\n'){
+            addTokenAndClearBuffer(COMMENT, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 30);
+        }
+    }
+
+    private void multilineComment31(char c){
+        if (c == '*'){
+            moveAndAddToBuffer(c, 32);
+        } else {
+            moveAndAddToBuffer(c, 31);
+        }
+    }
+
+    private void maybeMultilineCommentCloses32(char c){
+        if (c == '/'){
+            addTokenAndClearBuffer(COMMENT, buffer.toString() + '/');
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 31);
+        }
+    }
+
+    private void questionMarkOp33(char c){
+        if (c == '?'){
+            moveAndAddToBuffer(c, 34);
+        } else {
+            addTokenAndClearBuffer(OPERATOR, "?");
+            indexPointerRawCodeStream--;
+            state = 0;
+        }
+    }
+
+    private void maybeTrigraph34(char c){
+        if (c == '=' || c == '/' || c == '\'' || c == '(' || c == ')' || c == '!'
+                || c == '<' || c == '>' || c == '-'){
+            addTokenAndClearBuffer(TRIGRAPH, buffer.toString() + c);
+            state = 0;
+        } else {
+            addTokenAndClearBuffer(ERROR, "??");
+            state = -1;
+            indexPointerRawCodeStream--;
+        }
+    }
+
+    private void floatStart35(char c){
+        if (Lexeme.isDigit(c)){
+            moveAndAddToBuffer(c, 35);
+        } else if (c == 'e' || c == 'E'){
+            moveAndAddToBuffer(c, 36);
+        } else if (c == 'd'){
+            moveAndAddToBuffer(c, 41);
+        } else if (c == 'D'){
+            moveAndAddToBuffer(c, 39);
+        }
+
+        else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void floatExp36(char c){
+        if (c == '+' || c == '-'){
+            moveAndAddToBuffer(c, 37);
+        } else if (Lexeme.isDigit(c)){
+            moveAndAddToBuffer(c, 38);
+        } else {
+            moveAndAddToBuffer(c, 47); //error accumulation
+        }
+    }
+
+    private void floatExpSign37(char c){
+        if (Lexeme.isDigit(c)){
+            moveAndAddToBuffer(c, 38);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void floatExpWithoutSign38(char c){
+        if (Lexeme.isDigit(c)){
+            moveAndAddToBuffer(c, 38);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else if (c == 'd') {
+            moveAndAddToBuffer(c, 41);
+        } else if (c == 'D'){
+            moveAndAddToBuffer(c, 39);
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void floatExpBigD39(char c){
+        if (c == 'L') {
+            moveAndAddToBuffer(c, 40);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void floatExpBigDBigL40(char c){
+        if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void floatExpSmallD41(char c){
+        if (c == 'l') {
+            moveAndAddToBuffer(c, 40);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void binOctHexStart43(char c){
+        if (c == '.'){
+            moveAndAddToBuffer(c, 25);
+        } else if (Lexeme.isOctalDigit(c)){
+            moveAndAddToBuffer(c, 46);
+        } else if (c == 'b' || c == 'B'){
+            moveAndAddToBuffer(c, 45);
+        } else if (c == 'x' || c == 'X'){
+            moveAndAddToBuffer(c, 44);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void hexStartX44(char c){
+       if (Lexeme.isHexDigit(c)){
+           moveAndAddToBuffer(c, 54);
+       } else {
+           moveAndAddToBuffer(c, 47);
+       }
+    }
+
+    private void binStartB45(char c){
+        if (Lexeme.isBinaryDigit(c)){
+            moveAndAddToBuffer(c, 55);
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void octStartNum0746(char c){
+        if (Lexeme.isOctalDigit(c)){
+            moveAndAddToBuffer(c, 46);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void numberErrorAccumulatingState47(char c){
+        if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(ERROR, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = -1;
+        } else{
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void decimalStartNum48(char c){
+        if (Lexeme.isDigit(c)){
+            moveAndAddToBuffer(c, 48);
+        } else if (c == 'u' || c== 'U'){
+            moveAndAddToBuffer(c, 49);
+        } else if (c == 'l'){
+            moveAndAddToBuffer(c, 50);
+        } else if (c == 'L'){
+            moveAndAddToBuffer(c, 51);
+        }
+        else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void unsignedUu49(char c){
+        if (c == 'l'){
+            moveAndAddToBuffer(c, 50);
+        } else if (c == 'L'){
+            moveAndAddToBuffer(c, 51);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void unsignedSmallL50(char c){
+        if (c == 'l'){
+            moveAndAddToBuffer(c, 52);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void unsignedBigL51(char c){
+        if (c == 'L'){
+            moveAndAddToBuffer(c, 52);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void unsignedll52(char c){
+         if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void hex54(char c){
+        if (Lexeme.isHexDigit(c)){
+            moveAndAddToBuffer(c, 54);
+        } else if (c == 'u' || c== 'U'){
+            moveAndAddToBuffer(c, 49);
+        } else if (c == 'l'){
+            moveAndAddToBuffer(c, 50);
+        } else if (c == 'L'){
+            moveAndAddToBuffer(c, 51);
+        }
+        else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
+    private void bin55(char c){
+        if (Lexeme.isBinaryDigit(c)){
+            moveAndAddToBuffer(c, 54);
+        } else if (c == 'u' || c== 'U'){
+            moveAndAddToBuffer(c, 49);
+        } else if (c == 'l'){
+            moveAndAddToBuffer(c, 50);
+        } else if (c == 'L'){
+            moveAndAddToBuffer(c, 51);
+        }
+        else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            indexPointerRawCodeStream--;
+            state = 0;
+        } else {
+            moveAndAddToBuffer(c, 47);
+        }
+    }
+
     /**
-     * owrk with string literals
+     * work with string literals
     * */
     private void maybeStringLiteral6(char c){
         if (c == '\"'){
@@ -586,6 +981,9 @@ public class Lexer {
             case ERROR:
                 returnTag.append(TextTokenColor.ERROR.getColorCode());
                 break;
+            case TRIGRAPH:
+                returnTag.append(TextTokenColor.TRIGRAPH.getColorCode());
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + t.getName().getTokenName());
         }
@@ -615,7 +1013,8 @@ public class Lexer {
         ERROR("#880e4f"), //pink darken
         LITERAL_STRING("#304ffe"), //indigo accent-4
         LITERAL_CHAR("#fdd835"), //yellow darken-1
-        LITERAL_NUMBER("#f48fb1"); // pink lighten-3
+        LITERAL_NUMBER("#f48fb1"), // pink lighten-3
+        TRIGRAPH("#4e342e"); //brown darken 3
 
         private final String colorCode;
 

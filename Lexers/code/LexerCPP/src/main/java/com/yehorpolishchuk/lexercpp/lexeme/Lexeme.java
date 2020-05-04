@@ -102,4 +102,23 @@ public class Lexeme {
                 c == '/' || c == '^' || c == '&'  || c == '|'  || c == '~' || c == '!' ||
                 c == '=' || c == ',' || c == '\\' || c == '\"' || c == '\'';
     }
+
+    public static boolean isSeparatorAfterDecimalNumber(char c){
+        return isWhitespace(c) || (isAllowedNonIdChar(c) &&
+                c != '_' && c != '#' && c != '.' && c != '~' && c != '\\' && c != '\"' && c != '\'');
+    }
+
+    public static boolean isBinaryDigit(char c){
+        return c == '0' || c == '1';
+    }
+
+    public static boolean isHexDigit(char c){
+        return Character.isDigit(c) ||
+                ((byte)'a' <= (byte)c && (byte)'e' >= (byte)c) ||
+                ((byte)'A' <= (byte)c && (byte)'E' >= (byte)c);
+    }
+
+    public static boolean isOctalDigit(char c){
+        return Character.isDigit(c) && (c < (byte)'8');
+    }
 }
