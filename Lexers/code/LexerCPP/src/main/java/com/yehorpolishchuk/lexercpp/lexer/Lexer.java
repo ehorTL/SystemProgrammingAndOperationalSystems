@@ -24,7 +24,7 @@ public class Lexer {
 
     /**
      * Reads a file with filename and save it content to this.rawCode string.
-     * All new line symbols are replaces with only '\n' character.
+     * All new line symbols are replaced with only '\n' character.
      */
     public Lexer(String rawCodeFilename) throws FileNotFoundException {
         this.rawCodeFilename = rawCodeFilename;
@@ -104,7 +104,7 @@ public class Lexer {
     }
 
     /**
-     * for now it's test data here hardcoded
+     * Creates token array from rawCodeStream.
      * */
     public void parse(){
         //add \n to the beginning of the raw code and to the end of code
@@ -117,7 +117,7 @@ public class Lexer {
         while (this.indexPointerRawCodeStream < this.rawCodeStream.length()){
             char c = rawCodeStream.charAt(this.indexPointerRawCodeStream);
 
-            //logging
+            //logging transitions of DFA
             System.out.print("MUMBER : " + indexPointerRawCodeStream + " code " + (byte)c + " char " +
                     ((c == '\n') ? "\\n" : c) + " STATE FROM: " + state);
 
@@ -184,17 +184,17 @@ public class Lexer {
                 case 58: escapeSymbolInCharLiteral58(c); break;
                 case 59: whitespaceAfterEscapeSymbolInCharLiteral59(c); break;
                 case 60: linefeedSymbolInCharLiteral60(c); break;
-
                 case -1: {
                     state = 0;
                     indexPointerRawCodeStream--;
                     break;
                 }
                 default:{
-                    break; //change code, dummy
+                    break;
                 }
             }
 
+            //logging transitions of DFA
             System.out.println(" ---> " + state);
 
             this.indexPointerRawCodeStream++;
@@ -240,12 +240,18 @@ public class Lexer {
         tokens.add(new Token(tokenName, Character.toString(value)));
     }
 
+    /**
+     * Creates and adds a token of < tokenName, value > to tokens array.
+     * */
     private void addTokenAndClearBuffer(TokenNameAllowed tokenName, String value){
         tokens.add(new Token(tokenName, value));
         buffer = new StringBuilder("");
     }
 
-    // , ; { [ ( ) ] } ~
+    /**
+     * Checks if input character is one from , ; { [ ( ) ] } ~
+     * as they always makes token
+     * */
     private boolean isAlwaysOneCharToken(char c){
         return c == ',' || c == ';' || c == '{' || c == '[' || c == '('
                 || c == ')' || c == ']' || c == '}' || c == '~';
@@ -884,7 +890,7 @@ public class Lexer {
     }
 
     /**
-     * work with string literals
+     * Work with string literals.
     * */
     private void maybeStringLiteral6(char c){
         if (c == '\"'){
@@ -1003,6 +1009,17 @@ public class Lexer {
         }
     }
 
+    /**
+     * Checks if the word starting from fromIndexInRawCodeStream index in rawCodeStream
+     * is a preprocessor keyword.
+     *
+     * If true, the word found is written to returnWhatKeyword StringBuilder object.
+     *
+     * @param fromIndexInRawCodeStream index the string should be starting from
+     * @param returnWhatKeyword the word found will be written in
+     *
+     * @return if code stream contains any preprocessor keyword starting from fromIndexInRawCodeStream
+     * */
     private boolean isPreprocessorKeywordNext(int fromIndexInRawCodeStream, StringBuilder returnWhatKeyword){
         //length available 2,4,5,6
         int[] sizesAvailable = new int[]{2,4,5,6,7};
@@ -1020,6 +1037,9 @@ public class Lexer {
         return false;
     }
 
+    /**
+     * Returns string representing HTML tag describing token in the manner it should be shown in a code editor.
+     * */
     private String generateHTMLTagForToken(Token t) {
         StringBuilder returnTag = new StringBuilder("<span style=\"color: ");
         switch (t.getName().getTokenName()) {
