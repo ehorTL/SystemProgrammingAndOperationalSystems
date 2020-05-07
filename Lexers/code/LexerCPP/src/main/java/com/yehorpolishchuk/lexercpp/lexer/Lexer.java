@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -123,7 +125,7 @@ public class Lexer {
 
             switch (this.state){
                 case 0 : startState(c); break;
-//                case 1 :  no 1 state
+                case 1 : notAllowedSymbolsInBuffer1(c); break; //error state
                 case 2: maybePPDirective2(c); break;
                 case 3: maybePPDirective3(c); break;
                 case 4: maybePPDirective4(c); break;
@@ -184,6 +186,7 @@ public class Lexer {
                 case 58: escapeSymbolInCharLiteral58(c); break;
                 case 59: whitespaceAfterEscapeSymbolInCharLiteral59(c); break;
                 case 60: linefeedSymbolInCharLiteral60(c); break;
+                case 61: floatEndingWithPoint61(c); break;
                 case -1: {
                     state = 0;
                     indexPointerRawCodeStream--;
@@ -306,8 +309,9 @@ public class Lexer {
             moveAndAddToBuffer(c, 43);
         } else if (c == '\''){
             moveAndAddToBuffer(c, 56);
+        } else if (!Lexeme.isAllowedChar(c)){
+            moveAndAddToBuffer(c, 1);
         }
-        //else do nothing
     }
 
     private void lessThanOp(char c){
@@ -665,7 +669,7 @@ public class Lexer {
 
     private void binOctHexStart43(char c){
         if (c == '.'){
-            moveAndAddToBuffer(c, 25);
+            moveAndAddToBuffer(c, 61);
         } else if (Lexeme.isOctalDigit(c)){
             moveAndAddToBuffer(c, 46);
         } else if (c == 'b' || c == 'B'){
@@ -728,8 +732,9 @@ public class Lexer {
             moveAndAddToBuffer(c, 50);
         } else if (c == 'L'){
             moveAndAddToBuffer(c, 51);
-        }
-        else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
+        } else if (c == '.'){
+            moveAndAddToBuffer(c, 61);
+        } else if (Lexeme.isSeparatorAfterDecimalNumber(c)){
             addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
             indexPointerRawCodeStream--;
             state = 0;
@@ -889,6 +894,22 @@ public class Lexer {
         }
     }
 
+    private void floatEndingWithPoint61(char c){
+        if (Lexeme.isDigit(c)){
+            moveAndAddToBuffer(c, 35);
+        } else if (c == 'e' || c == 'E'){
+            moveAndAddToBuffer(c, 36);
+        } else if (c == 'd'){
+            moveAndAddToBuffer(c, 41);
+        } else if (c == 'D'){
+            moveAndAddToBuffer(c, 39);
+        } else{
+            addTokenAndClearBuffer(LITERAL_NUMBER, buffer.toString());
+            state = 0;
+            indexPointerRawCodeStream--;
+        }
+    }
+
     /**
      * Work with string literals.
     * */
@@ -959,6 +980,16 @@ public class Lexer {
         } else {
             state = 0;
             indexPointerRawCodeStream--;
+        }
+    }
+
+    private void notAllowedSymbolsInBuffer1(char c){
+        if (Lexeme.isAllowedChar(c)){
+            addTokenAndClearBuffer(ERROR, buffer.toString());
+            state = 0;
+            indexPointerRawCodeStream--;
+        } else{
+            moveAndAddToBuffer(c, 1);
         }
     }
 
