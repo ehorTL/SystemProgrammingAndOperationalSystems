@@ -180,7 +180,6 @@ public class Lexer {
 //                case 53: no 53 state
                 case 54: hex54(c); break;
                 case 55: bin55(c); break;
-                //new
                 case 56: charLiteralStart56(c); break;
                 case 57: anyCharInCharLiteral57(c); break;
                 case 58: escapeSymbolInCharLiteral58(c); break;

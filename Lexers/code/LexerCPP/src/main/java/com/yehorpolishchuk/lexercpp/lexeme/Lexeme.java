@@ -53,7 +53,6 @@ public class Lexeme {
 
     public static boolean isLetter(char c){
         return  (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-//        return Character.isLetter(c);
     }
 
     public static boolean isLetterOrUnderscore(char c){
