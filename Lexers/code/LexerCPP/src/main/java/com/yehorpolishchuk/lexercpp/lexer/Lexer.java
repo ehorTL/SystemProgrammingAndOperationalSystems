@@ -964,6 +964,8 @@ public class Lexer {
     private void maybeIdentifier10(char c){
         if (Lexeme.isIdentifierChar(c)){
             moveAndAddToBuffer(c,10); //retain the same
+        } else if (!Lexeme.isAllowedChar(c)){
+            moveAndAddToBuffer(c, 1);
         } else {
             addTokenAndClearBuffer(IDENTIFIER, buffer.toString());
             state = 0;
@@ -983,7 +985,7 @@ public class Lexer {
     }
 
     private void notAllowedSymbolsInBuffer1(char c){
-        if (Lexeme.isAllowedChar(c)){
+        if (Lexeme.isSeparatorAfterError(c)){
             addTokenAndClearBuffer(ERROR, buffer.toString());
             state = 0;
             indexPointerRawCodeStream--;

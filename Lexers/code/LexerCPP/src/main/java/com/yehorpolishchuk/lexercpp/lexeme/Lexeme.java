@@ -93,14 +93,19 @@ public class Lexeme {
 
     /**
      * utily method
-     * Size of char sequence is 29
+     * Size of char sequence is 28
      * */
     private static boolean isAllowedNonIdChar(char c){
-        return  c == '_' || c == '{' || c == '}'  || c == '['  || c == ']' || c == '#' ||
+        return  /*c == '_' || */ c == '{' || c == '}'  || c == '['  || c == ']' || c == '#' ||
                 c == '(' || c == ')' || c == '<'  || c == '>'  || c == '%' || c == ':' ||
                 c == ';' || c == '.' || c == '?'  || c == '*'  || c == '+' || c == '-' ||
                 c == '/' || c == '^' || c == '&'  || c == '|'  || c == '~' || c == '!' ||
                 c == '=' || c == ',' || c == '\\' || c == '\"' || c == '\'';
+    }
+
+    public static boolean isSeparatorAfterError(char c){
+        return isWhitespace(c) || (isAllowedNonIdChar(c) &&
+                c != '\\' && c != '\'' && c != '\"' && c != '#');
     }
 
     public static boolean isSeparatorAfterDecimalNumber(char c){
